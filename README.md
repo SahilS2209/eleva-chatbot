@@ -48,3 +48,4 @@ Copy `.env.example` to `.env` and fill in:
 - `GOOGLE_API_KEY` - Google AI API key (free tier from ai.google.dev)
 - `MONGODB_URL` - MongoDB connection string
 - `JWT_SECRET` - Secret for JWT tokens
+- `DATABASE_NAME` - MongoDB database name (default: chatbot_platform)
