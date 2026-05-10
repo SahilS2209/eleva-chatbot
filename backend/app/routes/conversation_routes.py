@@ -30,7 +30,7 @@ async def create_conversation(user_name: Optional[str] = "Anonymous"):
 @router.get("", response_model=List[ConversationResponse])
 async def list_conversations(
     status: Optional[ConversationStatus] = None,
-    limit: int = Query(default=50, le=100),
+    limit: int = Query(default=10, le=50),
     skip: int = 0,
     current_user: dict = Depends(require_agent_or_admin),
 ):
@@ -43,13 +43,6 @@ async def list_conversations(
     conversations = []
 
     async for conv in cursor:
-        # Get message count and last message
-        msg_count = await messages_collection.count_documents({"conversation_id": str(conv["_id"])})
-        last_msg = await messages_collection.find_one(
-            {"conversation_id": str(conv["_id"])},
-            sort=[("timestamp", -1)]
-        )
-
         conversations.append(ConversationResponse(
             id=str(conv["_id"]),
             user_name=conv.get("user_name"),
@@ -58,8 +51,8 @@ async def list_conversations(
             created_at=conv["created_at"],
             updated_at=conv["updated_at"],
             summary=conv.get("summary"),
-            message_count=msg_count,
-            last_message=last_msg["content"] if last_msg else None,
+            message_count=0,
+            last_message=None,
         ))
 
     return conversations
@@ -139,7 +132,7 @@ async def resolve_conversation(
     conversation_id: str,
     current_user: dict = Depends(require_agent_or_admin),
 ):
-    """Resolve a conversation."""
+    """Resolve a conversation (agent/admin)."""
     result = await conversations_collection.update_one(
         {"_id": ObjectId(conversation_id)},
         {
@@ -152,3 +145,32 @@ async def resolve_conversation(
     if result.modified_count == 0:
         raise HTTPException(status_code=404, detail="Conversation not found")
     return {"message": "Conversation resolved"}
+
+
+@router.patch("/{conversation_id}/end")
+async def end_conversation(conversation_id: str):
+    """End a conversation (public - for customers)."""
+    conv = await conversations_collection.find_one({"_id": ObjectId(conversation_id)})
+    if not conv:
+        raise HTTPException(status_code=404, detail="Conversation not found")
+
+    # Add system message so agent sees it
+    await messages_collection.insert_one({
+        "conversation_id": conversation_id,
+        "role": "system",
+        "content": "Customer has ended the chat.",
+        "timestamp": datetime.utcnow(),
+        "metadata": None,
+    })
+
+    # Mark as resolved
+    await conversations_collection.update_one(
+        {"_id": ObjectId(conversation_id)},
+        {
+            "$set": {
+                "status": ConversationStatus.RESOLVED.value,
+                "updated_at": datetime.utcnow(),
+            }
+        }
+    )
+    return {"message": "Conversation ended"}

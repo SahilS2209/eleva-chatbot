@@ -41,17 +41,16 @@ interface Stats {
 export default function AnalyticsPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [feedbacks, setFeedbacks] = useState<any[]>([]);
+  const [feedbackTotal, setFeedbackTotal] = useState(0);
+  const [feedbackPage, setFeedbackPage] = useState(0);
   const [loading, setLoading] = useState(true);
+  const PAGE_SIZE = 10;
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const [statsRes, fbRes] = await Promise.all([
-          analyticsAPI.getDashboard(),
-          feedbackAPI.list(),
-        ]);
+        const statsRes = await analyticsAPI.getDashboard();
         setStats(statsRes.data);
-        setFeedbacks(fbRes.data);
       } catch (error) {
         console.error('Failed to fetch analytics');
       } finally {
@@ -60,6 +59,19 @@ export default function AnalyticsPage() {
     };
     fetchStats();
   }, []);
+
+  useEffect(() => {
+    const fetchFeedbacks = async () => {
+      try {
+        const fbRes = await feedbackAPI.list(PAGE_SIZE, feedbackPage * PAGE_SIZE);
+        setFeedbacks(fbRes.data.feedbacks);
+        setFeedbackTotal(fbRes.data.total);
+      } catch (error) {
+        console.error('Failed to fetch feedbacks');
+      }
+    };
+    fetchFeedbacks();
+  }, [feedbackPage]);
 
   if (loading) {
     return (
@@ -227,9 +239,12 @@ export default function AnalyticsPage() {
       {/* Customer Reviews */}
       {feedbacks.length > 0 && (
         <div className="card mt-8">
-          <div className="flex items-center gap-3 mb-6">
-            <Star className="w-5 h-5 text-yellow-500" />
-            <h2 className="font-semibold">Customer Reviews</h2>
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Star className="w-5 h-5 text-yellow-500" />
+              <h2 className="font-semibold">Customer Reviews</h2>
+            </div>
+            <span className="text-xs text-gray-400">{feedbackTotal} total reviews</span>
           </div>
           <div className="space-y-3">
             {feedbacks.map((fb) => (
@@ -257,6 +272,26 @@ export default function AnalyticsPage() {
                 </div>
               </div>
             ))}
+          </div>
+          {/* Pagination */}
+          <div className="flex justify-between items-center mt-4 pt-4 border-t">
+            <button
+              onClick={() => setFeedbackPage((p) => Math.max(0, p - 1))}
+              disabled={feedbackPage === 0}
+              className="text-sm text-primary-600 disabled:text-gray-300 px-3 py-1 rounded hover:bg-gray-50"
+            >
+              ← Previous
+            </button>
+            <span className="text-xs text-gray-400">
+              Page {feedbackPage + 1} of {Math.ceil(feedbackTotal / PAGE_SIZE)}
+            </span>
+            <button
+              onClick={() => setFeedbackPage((p) => p + 1)}
+              disabled={(feedbackPage + 1) * PAGE_SIZE >= feedbackTotal}
+              className="text-sm text-primary-600 disabled:text-gray-300 px-3 py-1 rounded hover:bg-gray-50"
+            >
+              Next →
+            </button>
           </div>
         </div>
       )}

@@ -53,11 +53,12 @@ export const authAPI = {
 export const conversationsAPI = {
   create: (userName?: string) =>
     api.post('/api/conversations', null, { params: { user_name: userName } }),
-  list: (status?: string) =>
-    api.get('/api/conversations', { params: { status } }),
+  list: (status?: string, limit?: number, skip?: number) =>
+    api.get('/api/conversations', { params: { status, limit, skip } }),
   get: (id: string) => api.get(`/api/conversations/${id}`),
   escalate: (id: string) => api.patch(`/api/conversations/${id}/escalate`),
   resolve: (id: string) => api.patch(`/api/conversations/${id}/resolve`),
+  end: (id: string) => api.patch(`/api/conversations/${id}/end`),
   assign: (id: string, agentId: string) =>
     api.patch(`/api/conversations/${id}/assign`, null, { params: { agent_id: agentId } }),
 };
@@ -114,5 +115,6 @@ export const usersAPI = {
 export const feedbackAPI = {
   submit: (conversationId: string, rating: number, comment?: string) =>
     api.post('/api/feedback', { conversation_id: conversationId, rating, comment }),
-  list: () => api.get('/api/feedback/list'),
+  list: (limit?: number, skip?: number) =>
+    api.get('/api/feedback/list', { params: { limit, skip } }),
 };
