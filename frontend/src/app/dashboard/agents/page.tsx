@@ -1,8 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { usersAPI } from '@/lib/api';
-import { Users, Mail, Calendar, Shield, Trash2, UserCheck, UserX } from 'lucide-react';
+import { usersAPI, authAPI } from '@/lib/api';
+import { Users, Mail, Calendar, Shield, Trash2, UserCheck, UserX, Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 interface Agent {
@@ -18,6 +18,11 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<Agent[]>([]);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [showAddForm, setShowAddForm] = useState(false);
+  const [newName, setNewName] = useState('');
+  const [newEmail, setNewEmail] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [adding, setAdding] = useState(false);
 
   const fetchAgents = async () => {
     try {
@@ -66,12 +71,87 @@ export default function AgentsPage() {
     }
   };
 
+  const handleAddAgent = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setAdding(true);
+    try {
+      await authAPI.register({ email: newEmail, password: newPassword, name: newName, role: 'agent' });
+      toast.success('Agent added successfully');
+      setNewName('');
+      setNewEmail('');
+      setNewPassword('');
+      setShowAddForm(false);
+      fetchAgents();
+    } catch (error: any) {
+      toast.error(error.response?.data?.detail || 'Failed to add agent');
+    } finally {
+      setAdding(false);
+    }
+  };
+
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold">Manage Users</h1>
-        <p className="text-sm text-gray-500">{agents.length} user{agents.length !== 1 ? 's' : ''}</p>
+        <button
+          onClick={() => setShowAddForm(!showAddForm)}
+          className="btn-primary flex items-center gap-2"
+        >
+          <Plus className="w-4 h-4" />
+          Add Agent
+        </button>
       </div>
+
+      {/* Add Agent Form */}
+      {showAddForm && (
+        <div className="card mb-6">
+          <h2 className="font-semibold mb-4">Add New Support Agent</h2>
+          <form onSubmit={handleAddAgent} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+              <input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                className="input-field"
+                placeholder="Agent name"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <input
+                type="email"
+                value={newEmail}
+                onChange={(e) => setNewEmail(e.target.value)}
+                className="input-field"
+                placeholder="agent@elementshr.com"
+                required
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+              <input
+                type="password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                className="input-field"
+                placeholder="Minimum 6 characters"
+                minLength={6}
+                required
+              />
+            </div>
+            <div className="flex gap-3">
+              <button type="submit" disabled={adding} className="btn-primary">
+                {adding ? 'Adding...' : 'Add Agent'}
+              </button>
+              <button type="button" onClick={() => setShowAddForm(false)} className="btn-secondary">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
 
       {/* Delete Confirmation Modal */}
       {deleteId && (
@@ -108,9 +188,9 @@ export default function AgentsPage() {
       ) : agents.length === 0 ? (
         <div className="card text-center py-12">
           <Users className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-          <p className="text-gray-500 mb-2">No other users registered yet</p>
+          <p className="text-gray-500 mb-2">No support agents added yet</p>
           <p className="text-sm text-gray-400">
-            Users can register from the sign-up page
+            Click &quot;Add Agent&quot; to create a support agent account
           </p>
         </div>
       ) : (

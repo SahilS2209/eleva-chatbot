@@ -12,7 +12,6 @@ export default function RegisterPage() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [role, setRole] = useState('agent');
   const [loading, setLoading] = useState(false);
   const { login } = useAuthStore();
   const router = useRouter();
@@ -22,7 +21,7 @@ export default function RegisterPage() {
     setLoading(true);
 
     try {
-      const response = await authAPI.register({ email, password, name, role });
+      const response = await authAPI.register({ email, password, name, role: 'admin' });
       const { access_token, user } = response.data;
       login(access_token, user);
       toast.success('Registration successful!');
@@ -42,7 +41,7 @@ export default function RegisterPage() {
           Eleva
         </h1>
         <h2 className="text-lg text-gray-600 text-center mb-8">
-          Create your account
+          Create admin account
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -90,21 +89,6 @@ export default function RegisterPage() {
               minLength={6}
               required
             />
-          </div>
-
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-              Role
-            </label>
-            <select
-              id="role"
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-              className="input-field"
-            >
-              <option value="agent">Support Agent</option>
-              <option value="admin">Admin</option>
-            </select>
           </div>
 
           <button
