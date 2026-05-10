@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { ticketsAPI } from '@/lib/api';
 import { Ticket, Clock, CheckCircle, AlertTriangle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -22,16 +21,18 @@ interface TicketData {
 
 export default function TicketsPage() {
   const [tickets, setTickets] = useState<TicketData[]>([]);
-  const searchParams = useSearchParams();
-  const [filter, setFilter] = useState(searchParams.get('status') || '');
+  const [filter, setFilter] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const statusParam = searchParams.get('status');
-    if (statusParam && statusParam !== filter) {
-      setFilter(statusParam);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const statusParam = params.get('status');
+      if (statusParam) {
+        setFilter(statusParam);
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   const fetchTickets = async () => {
     try {

@@ -1,7 +1,6 @@
 'use client';
 
 import { useEffect, useState, useRef, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
 import { conversationsAPI, chatAPI } from '@/lib/api';
 import { MessageSquare, Send, X, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
@@ -28,16 +27,18 @@ export default function ConversationsPage() {
   const [selectedConv, setSelectedConv] = useState<string | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [agentInput, setAgentInput] = useState('');
-  const searchParams = useSearchParams();
-  const [filter, setFilter] = useState<string>(searchParams.get('status') || '');
+  const [filter, setFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const statusParam = searchParams.get('status');
-    if (statusParam && statusParam !== filter) {
-      setFilter(statusParam);
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const statusParam = params.get('status');
+      if (statusParam) {
+        setFilter(statusParam);
+      }
     }
-  }, [searchParams]);
+  }, []);
 
   const fetchConversations = async () => {
     try {
