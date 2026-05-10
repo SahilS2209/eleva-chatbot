@@ -47,7 +47,7 @@ export default function Sidebar() {
     };
 
     fetchCounts();
-    const interval = setInterval(fetchCounts, 15000); // Refresh every 15s
+    const interval = setInterval(fetchCounts, 5000); // Refresh every 5s
     return () => clearInterval(interval);
   }, []);
 

@@ -242,13 +242,19 @@ export default function ChatWidget() {
               </button>
             ) : (
               <form onSubmit={sendMessage} className="flex gap-2">
-                <input
-                  type="text"
+                <textarea
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      sendMessage(e);
+                    }
+                  }}
                   placeholder={status === 'escalated' ? 'Type your reply...' : 'Type a message...'}
-                  className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-full text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none"
+                  className="flex-1 px-3.5 py-2.5 border border-gray-200 rounded-2xl text-sm focus:ring-2 focus:ring-primary-500 focus:border-transparent outline-none resize-none min-h-[40px] max-h-[80px]"
                   disabled={loading}
+                  rows={1}
                 />
                 <button
                   type="submit"
