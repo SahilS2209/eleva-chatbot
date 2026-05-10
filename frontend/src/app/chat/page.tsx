@@ -158,12 +158,12 @@ export default function ChatPage() {
           </div>
         </div>
         <div className="flex items-center gap-4">
-          {status === 'active' && messages.length > 1 && (
+          {(status === 'active' || status === 'escalated') && messages.length > 1 && (
             <button
               onClick={async () => {
                 if (!conversationId) return;
                 try {
-                  await conversationsAPI.resolve(conversationId);
+                  await conversationsAPI.end(conversationId);
                   setStatus('resolved');
                   setMessages((prev) => [...prev, {
                     role: 'assistant',

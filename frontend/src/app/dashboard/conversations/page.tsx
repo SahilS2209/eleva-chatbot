@@ -29,6 +29,11 @@ export default function ConversationsPage() {
   const [agentInput, setAgentInput] = useState('');
   const [filter, setFilter] = useState<string>('');
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const [page, setPage] = useState(0);
+  const PAGE_SIZE = 10;
+  const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -36,24 +41,56 @@ export default function ConversationsPage() {
       const statusParam = params.get('status');
       if (statusParam) {
         setFilter(statusParam);
+        return; // filter change will trigger fetch below
       }
     }
+    fetchConversations(true);
   }, []);
 
-  const fetchConversations = async () => {
+  const fetchConversations = async (reset = false) => {
+    const currentPage = reset ? 0 : page;
+    if (reset) {
+      setPage(0);
+      setLoading(true);
+    } else {
+      setLoadingMore(true);
+    }
     try {
-      const response = await conversationsAPI.list(filter || undefined);
-      setConversations(response.data);
+      const response = await conversationsAPI.list(filter || undefined, PAGE_SIZE, currentPage * PAGE_SIZE);
+      if (reset) {
+        setConversations(response.data);
+      } else {
+        setConversations((prev) => [...prev, ...response.data]);
+      }
+      setHasMore(response.data.length === PAGE_SIZE);
     } catch (error) {
       console.error('Failed to fetch conversations');
     } finally {
       setLoading(false);
+      setLoadingMore(false);
     }
   };
 
   useEffect(() => {
-    fetchConversations();
+    if (filter) {
+      fetchConversations(true);
+    }
   }, [filter]);
+
+  useEffect(() => {
+    if (page > 0) {
+      fetchConversations(false);
+    }
+  }, [page]);
+
+  // Infinite scroll handler
+  const handleScroll = useCallback(() => {
+    if (!listRef.current || loadingMore || !hasMore) return;
+    const { scrollTop, scrollHeight, clientHeight } = listRef.current;
+    if (scrollTop + clientHeight >= scrollHeight - 50) {
+      setPage((p) => p + 1);
+    }
+  }, [loadingMore, hasMore]);
 
   const openConversation = async (id: string) => {
     setSelectedConv(id);
@@ -146,7 +183,7 @@ export default function ConversationsPage() {
   return (
     <div className="flex h-[calc(100vh-4rem)] -m-8">
       {/* Conversation List */}
-      <div className="w-96 border-r bg-white overflow-y-auto">
+      <div className="w-96 border-r bg-white overflow-y-auto" ref={listRef} onScroll={handleScroll}>
         <div className="p-4 border-b">
           <h1 className="text-lg font-semibold mb-3">Conversations</h1>
           <select
@@ -184,6 +221,11 @@ export default function ConversationsPage() {
           ))}
           {conversations.length === 0 && !loading && (
             <p className="p-4 text-sm text-gray-500 text-center">No conversations found</p>
+          )}
+          {loadingMore && (
+            <div className="p-4 text-center">
+              <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-primary-600 mx-auto"></div>
+            </div>
           )}
         </div>
       </div>

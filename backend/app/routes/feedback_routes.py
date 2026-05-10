@@ -72,10 +72,10 @@ async def get_feedback_stats():
 
 
 @router.get("/list")
-async def list_feedback():
-    """List latest 10 feedback entries."""
+async def list_feedback(limit: int = 10, skip: int = 0):
+    """List feedback entries with pagination."""
     feedbacks = []
-    cursor = feedback_collection.find().sort("created_at", -1).limit(10)
+    cursor = feedback_collection.find().sort("created_at", -1).skip(skip).limit(limit)
     async for fb in cursor:
         feedbacks.append({
             "id": str(fb["_id"]),
@@ -84,4 +84,5 @@ async def list_feedback():
             "comment": fb.get("comment") or None,
             "created_at": fb["created_at"].isoformat(),
         })
-    return feedbacks
+    total = await feedback_collection.count_documents({})
+    return {"feedbacks": feedbacks, "total": total}
