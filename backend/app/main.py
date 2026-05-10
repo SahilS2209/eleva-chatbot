@@ -49,7 +49,7 @@ async def load_knowledge_base():
 
 app = FastAPI(
     title=settings.app_name,
-    description="AI-Powered Customer Support Chatbot Platform API",
+    description="AI-Powered Customer Support Chatbot Platform Backend",
     version="1.0.0",
     lifespan=lifespan,
 )
