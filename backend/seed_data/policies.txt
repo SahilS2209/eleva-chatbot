@@ -1,0 +1,41 @@
+Elements HR Services - Service Policies
+
+Onboarding Process:
+1. Initial consultation and requirement gathering (Day 1)
+2. Service agreement signing and documentation (Day 2)
+3. Data collection - employee details, salary structure (Day 2-3)
+4. System setup and configuration (Day 3-4)
+5. Parallel payroll run for verification (Day 4-5)
+6. Go-live with full service (Day 5 onwards)
+
+Service Level Agreement (SLA):
+- Payroll processing: Completed by 28th of every month
+- Statutory filings: Filed before due dates (PF by 15th, ESI by 15th)
+- Query resolution: Within 4 working hours
+- Recruitment shortlisting: First batch within 5 working days
+- Background verification: Report within 5-7 working days
+
+Payment Terms:
+- Monthly billing cycle
+- Payment due within 15 days of invoice
+- Accepted methods: Bank transfer (NEFT/RTGS), cheque, UPI
+- Late payment: 1.5% interest per month after due date
+
+Confidentiality:
+- All client data is treated as strictly confidential
+- NDA signed before engagement begins
+- Employee data is never shared with third parties
+- Data retention: 7 years as per statutory requirements
+- Data deletion: Upon request after statutory retention period
+
+Escalation Matrix:
+- Level 1: Dedicated Account Manager (response within 4 hours)
+- Level 2: Operations Head (response within 8 hours)
+- Level 3: Director (response within 24 hours)
+- Emergency: Direct hotline for critical payroll/compliance issues
+
+Termination Policy:
+- 30-day notice period required from either party
+- All pending statutory filings completed before handover
+- Complete data handover in standard format
+- No exit charges for contracts over 6 months

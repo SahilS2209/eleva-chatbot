@@ -1,0 +1,35 @@
+services:
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: chatbot-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URL=mongodb+srv://SahilS2209:Sahil1234%26@cluster0.v4qtqwz.mongodb.net/chatbot_platform?retryWrites=true&w=majority
+      - DATABASE_NAME=chatbot_platform
+      - JWT_SECRET=${JWT_SECRET:-super-secret-jwt-key-change-in-production}
+      - GOOGLE_API_KEY=AIzaSyDPzqcK4IJMM02baNVLsugEM1s6r2y0EPw
+    volumes:
+      - ./backend:/app
+      - chroma_data:/app/chroma_data
+    restart: unless-stopped
+
+  # Next.js Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: chatbot-frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - NEXT_PUBLIC_API_URL=http://localhost:8000
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  chroma_data:
