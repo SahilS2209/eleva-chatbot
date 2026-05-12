@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, Sparkles, MessageCircle, Minimize2 } from 'lucide-react';
+import { Send, Sparkles, MessageCircle, Minimize2, RotateCcw, CheckCircle2 } from 'lucide-react';
 import { chatAPI, conversationsAPI } from '@/lib/api';
 
 interface Message {
@@ -168,13 +168,46 @@ export default function ChatWidget() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white/80 hover:text-white transition-colors"
-              aria-label="Close chat"
-            >
-              <Minimize2 className="w-5 h-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              {(status === 'active' || status === 'escalated') && messages.length > 1 && conversationId && (
+                <button
+                  onClick={async () => {
+                    if (!conversationId) return;
+                    try {
+                      await conversationsAPI.end(conversationId);
+                      setStatus('resolved');
+                    } catch (error) {}
+                  }}
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="End chat"
+                  title="End Chat"
+                >
+                  <CheckCircle2 className="w-5 h-5" />
+                </button>
+              )}
+              {messages.length > 1 && (
+                <button
+                  onClick={() => {
+                    setConversationId(null);
+                    setMessages([]);
+                    setStatus('active');
+                    startConversation();
+                  }}
+                  className="text-white/80 hover:text-white transition-colors"
+                  aria-label="New chat"
+                  title="New Chat"
+                >
+                  <RotateCcw className="w-4 h-4" />
+                </button>
+              )}
+              <button
+                onClick={() => setIsOpen(false)}
+                className="text-white/80 hover:text-white transition-colors"
+                aria-label="Close chat"
+              >
+                <Minimize2 className="w-5 h-5" />
+              </button>
+            </div>
           </div>
 
           {/* Messages */}
