@@ -33,7 +33,7 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-100">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-50 to-blue-100 px-4">
       <div className="card w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6 flex items-center justify-center gap-2">
           <Sparkles className="w-6 h-6 text-primary-600" />

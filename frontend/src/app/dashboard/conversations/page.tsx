@@ -181,9 +181,9 @@ export default function ConversationsPage() {
   };
 
   return (
-    <div className="flex h-[calc(100vh-4rem)] -m-8">
+    <div className="flex flex-col md:flex-row h-[calc(100vh-4rem)] -m-4 md:-m-8">
       {/* Conversation List */}
-      <div className="w-96 border-r bg-white overflow-y-auto" ref={listRef} onScroll={handleScroll}>
+      <div className={`${selectedConv ? 'hidden md:block' : 'block'} w-full md:w-96 border-r bg-white overflow-y-auto`} ref={listRef} onScroll={handleScroll}>
         <div className="p-4 border-b">
           <h1 className="text-lg font-semibold mb-3">Conversations</h1>
           <select
@@ -231,7 +231,7 @@ export default function ConversationsPage() {
       </div>
 
       {/* Chat View */}
-      <div className="flex-1 flex flex-col bg-gray-50">
+      <div className={`${selectedConv ? 'block' : 'hidden md:flex'} flex-1 flex flex-col bg-gray-50`}>
         {selectedConv ? (
           <>
             {/* Chat Header */}

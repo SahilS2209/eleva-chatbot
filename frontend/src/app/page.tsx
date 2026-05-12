@@ -17,21 +17,21 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 to-blue-100">
       {/* Header */}
-      <header className="container mx-auto px-6 py-6 flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-primary-700 flex items-center gap-2">
-          <Sparkles className="w-7 h-7" />
+      <header className="container mx-auto px-4 md:px-6 py-4 md:py-6 flex justify-between items-center">
+        <h1 className="text-xl md:text-2xl font-bold text-primary-700 flex items-center gap-2">
+          <Sparkles className="w-6 h-6 md:w-7 md:h-7" />
           Eleva
         </h1>
-        <div className="flex gap-4">
-          <Link href="/chat" className="btn-secondary">
+        <div className="flex gap-2 md:gap-4">
+          <Link href="/chat" className="btn-secondary text-sm md:text-base">
             Try Chat Demo
           </Link>
           {isAuthenticated ? (
-            <Link href="/dashboard" className="btn-primary">
+            <Link href="/dashboard" className="btn-primary text-sm md:text-base">
               Dashboard
             </Link>
           ) : (
-            <Link href="/login" className="btn-primary">
+            <Link href="/login" className="btn-primary text-sm md:text-base">
               Login
             </Link>
           )}
@@ -39,29 +39,29 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <main className="container mx-auto px-6 py-20 text-center">
-        <h2 className="text-5xl font-bold text-gray-900 mb-6">
+      <main className="container mx-auto px-4 md:px-6 py-10 md:py-20 text-center">
+        <h2 className="text-3xl md:text-5xl font-bold text-gray-900 mb-4 md:mb-6">
           AI-Powered Customer Support
         </h2>
-        <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-gray-600 mb-8 md:mb-10 max-w-2xl mx-auto">
           Eleva is an intelligent chatbot that resolves customer queries instantly,
           creates tickets, and seamlessly escalates to human agents when needed.
         </p>
 
-        <div className="flex gap-4 justify-center mb-20">
-          <Link href="/chat" className="btn-primary text-lg px-8 py-3">
+        <div className="flex flex-wrap gap-3 md:gap-4 justify-center mb-10 md:mb-20">
+          <Link href="/chat" className="btn-primary text-sm md:text-lg px-4 md:px-8 py-2 md:py-3">
             Start a Conversation
           </Link>
-          <Link href="/demo" className="btn-secondary text-lg px-8 py-3">
+          <Link href="/demo" className="btn-secondary text-sm md:text-lg px-4 md:px-8 py-2 md:py-3">
             View Widget Demo
           </Link>
-          <Link href={isAuthenticated ? '/dashboard' : '/login'} className="btn-secondary text-lg px-8 py-3">
+          <Link href={isAuthenticated ? '/dashboard' : '/login'} className="btn-secondary text-sm md:text-lg px-4 md:px-8 py-2 md:py-3">
             Admin Dashboard
           </Link>
         </div>
 
         {/* Features */}
-        <div className="grid md:grid-cols-4 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8 max-w-5xl mx-auto">
           <div className="card text-center">
             <MessageSquare className="w-10 h-10 text-primary-600 mx-auto mb-4" />
             <h3 className="font-semibold text-lg mb-2">Smart Chat</h3>
